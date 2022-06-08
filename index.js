@@ -32,7 +32,7 @@ app.get('/api/users', (req, res) => {
 });
 
 app.post('/api/users/:_id/exercises', (req, res) => {
-  let user = users.find((val) => val._id == Number(req.params._id));
+  let user = users.find((val) => val._id == req.params._id);
   if (user == undefined) res.json({error: "user not found"});
 
   let exercise = {
@@ -53,14 +53,23 @@ app.get('/api/users/:_id/logs', (req, res) => {
   let to = new Date(req.query.to);
   let limit = Number(req.query.limit);
 
-  let fusers = users.filter((val) => {
+  let user = users.find((val) => val._id == id);
+  if (user == undefined) res.json({error: "user not found"});
+
+  let fexercises = exercises.filter((val) => {
     let date = new Date(val.date);
     return date >= from && date <= to;
   });
 
-  fusers = fusers.filter((val, i) => i < limit);
+  let count = fexercises.length;
+  fexercises = fexercises.filter((val, i) => i < limit);
 
-  res.json(fusers);
+  res.json({
+    username: user.username,
+    count: count,
+    _id: user._id,
+    log: fexercises
+  });
 });
 
 const listener = app.listen(process.env.PORT || 3000, () => {
