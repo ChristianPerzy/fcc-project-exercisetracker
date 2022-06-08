@@ -56,19 +56,32 @@ app.get('/api/users/:_id/logs', (req, res) => {
   let user = users.find((val) => val._id == id);
   if (user == undefined) res.json({error: "user not found"});
 
-  let fexercises = exercises.filter((val) => {
+  let fexercises = exercises.filter((val) => val._id == id);
+  
+  let count = fexercises.length;
+
+  fexercises = fexercises.filter((val) => {
     let date = new Date(val.date);
     return date >= from && date <= to;
   });
 
-  let count = fexercises.length;
   fexercises = fexercises.filter((val, i) => i < limit);
+
+  let loglist = [];
+  for (let val of fexercises) {
+    let e = {
+      description: val.description,
+      duration: val.duration,
+      date: val.date
+    };
+    loglist.push(e);
+  }
 
   res.json({
     username: user.username,
     count: count,
     _id: user._id,
-    log: fexercises
+    log: loglist
   });
 });
 
