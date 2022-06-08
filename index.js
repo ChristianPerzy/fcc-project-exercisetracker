@@ -62,10 +62,14 @@ app.get('/api/users/:_id/logs', (req, res) => {
 
   fexercises = fexercises.filter((val) => {
     let date = new Date(val.date);
-    return date >= from && date <= to;
+
+    let lower_bound = isNaN(from) ? true : date >= from;
+    let upper_bound = isNaN(to) ? true : date <= to;
+
+    return lower_bound && upper_bound;
   });
 
-  fexercises = fexercises.filter((val, i) => i < limit);
+  if (!isNaN(limit)) fexercises = fexercises.filter((val, i) => i < limit);
 
   let loglist = [];
   for (let val of fexercises) {
