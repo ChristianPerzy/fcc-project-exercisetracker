@@ -35,10 +35,13 @@ app.post('/api/users/:_id/exercises', (req, res) => {
   let user = users.find((val) => val._id == req.params._id);
   if (user == undefined) res.json({error: "user not found"});
 
+  let date = new Date(req.body.date);
+  if (date == 'Invalid Date') date = new Date();
+
   let exercise = {
     _id: user._id,
     username: user.username,
-    date: (new Date(req.body.date)).toDateString(),
+    date: date.toDateString(),
     duration: Number(req.body.duration),
     description: req.body.description
   };
